@@ -1,13 +1,13 @@
 <?php
 /*
 Plugin Name: Gravity Forms Edit Entries
-Plugin URI: https://github.com/jr00ck/gravity-forms-edit-entries
+Plugin URI: https://github.com/mmirus/gravity-forms-edit-entries
 Description: Allows editing Gravity Forms entries on your site using shortcodes. Uses [gf-edit-entries] shortcode. Also provides a link to edit an entry using [gf-edit-entries-link] shortcode.
 Version: 1.9.1
 Author: FreeUp
 Author URI: http://freeupwebstudio.com
 Author Email: jeremy@freeupwebstudio.com
-GitHub Plugin URI: https://github.com/jr00ck/gravity-forms-edit-entries
+GitHub Plugin URI: https://github.com/mmirus/gravity-forms-edit-entries
 */
 
 // Add the entry_id to the form as a hidden field. This triggers an update to an existing entry
@@ -37,10 +37,12 @@ function gf_edit_entries_shortcode($params)
                     'value'			=> ''
                 ), $params));
 
-    if (is_numeric($_GET['entry_id']) || $entry_id) {
-        GFEE::set_entry_id($entry_id ? $entry_id : $_GET['entry_id']);
+    $entry_id = (!$entry_id && array_key_exists('entry_id', $_GET)) ? $_GET['entry_id'] : $entry_id;
+    $value = (!$value && array_key_exists('value', $_GET)) ? $_GET['value'] : $value;
+    if (is_numeric($entry_id)) {
+        GFEE::set_entry_id($entry_id);
         GFEE::get_entry_by_id(GFEE::$entry_id);
-    } elseif ($_GET['value'] || $value) {
+    } elseif ($value) {
         GFEE::get_entry_by_value($form_id, $key, $value);
     }
 
@@ -92,8 +94,11 @@ class GFEE
 
     public static function set_entry($entry)
     {
-        self::$entry = $entry[0] ? $entry[0] : $entry;
-        self::set_entry_id(self::$entry['id']);
+        $entry = is_array($entry) && count($entry) ? $entry[0] : $entry;
+        if ($entry) {
+            self::$entry = $entry;
+            self::set_entry_id(self::$entry['id']);
+        }
     }
     
     public static function set_entry_id($entry_id)
