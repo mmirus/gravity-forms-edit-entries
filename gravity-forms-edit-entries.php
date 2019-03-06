@@ -205,7 +205,7 @@ function gfee_field_content($content, $field, $value, $lead_id, $form_id)
         $file_list_id 	= "gform_preview_" . $form_id . "_". $id;
 
         $file_urls = $multiple_files ? json_decode($value) : array($value);
-        $preview .= sprintf("<div id='preview_existing_files_%d' data-formid='%d' class='ginput_preview'>", $id, $form_id);
+        $preview = sprintf("<div id='preview_existing_files_%d' data-formid='%d' class='ginput_preview'>", $id, $form_id);
 
         if ($file_urls) {
             foreach ($file_urls as $file_index => $file_url) {
